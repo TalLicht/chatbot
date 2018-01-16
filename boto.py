@@ -1,6 +1,7 @@
 """
 This is the template server side for ChatBot
 """
+from sys import argv
 from bottle import route, run, template, static_file, request
 import json
 
@@ -65,8 +66,11 @@ def handle_conversation(user_message):
 
 
 
-def main():
-    run(host='localhost', port=7000)
+def main(host="0.0.0.0", port=None):
+    if not port:
+        port = argv[1]   
+    run(host=host, port=port)
 
 if __name__ == '__main__':
+    # main(host="localhost", port=7000)  # run on localhost
     main()
