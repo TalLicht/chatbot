@@ -18,11 +18,11 @@ def chat():
     user_message_to_list = user_message.lower().split()
     for word in user_message_to_list:
         if word == "joke":
-            print "in joke"
-            a = get_random_joke()
+            return json.dumps(get_random_joke())
+        elif word == "weather":
+            return json.dumps(get_weather(user_message))
         else:
-            a = handle_conversation(user_message)
-    return json.dumps(a)
+            return json.dumps(handle_conversation(user_message))
 
 
 @route("/test", method='POST')
@@ -46,7 +46,6 @@ def images(filename):
     return static_file(filename, root='images')
 
 
-
 def get_random_joke():
     joke = requests.get('http://api.icndb.com/jokes/random')
     joke = joke.json()
@@ -54,16 +53,31 @@ def get_random_joke():
     return {"animation": "laughing", "msg": joke}
 
 
+def get_weather(user_message):
+    user_message_edited = user_message.lower().split("in")
+    city_name = user_message_edited[1].replace("?","") [1:]
+    print len(city_name)
+    weather = requests.get('http://api.openweathermap.org/data/2.5/weather?q='+ city_name + '&appid=5d1452edf89427c2b801a97919ea0a8b')
+    json_object = weather.json()
+    temp_k = int(json_object['main']['temp'])
+    temp_c = int(temp_k - 273.15)
+    if temp_c < 15:
+        return {"animation": "takeoff", "msg": "The weather in " + str(city_name) + " is " + str(temp_c) + " celsius. So cold!"}
+    elif 16 < temp_c < 28:
+        return {"animation": "inlove", "msg": "The weather in " + str(city_name) + " is " + str(temp_c) + " celsius. Nice and warm, just as I love it!"}
+    else:
+        return {"animation": "takeoff", "msg": "The weather in " + str(city_name) + " is " + str(temp_c) + " celsius. Way too hot for me.."}
+
+
 def handle_conversation(user_message):
-    user_message_to_list = user_message.lower()
-    user_message_to_list = user_message_to_list.split()
+    user_message_to_list = user_message.lower().split()
     list_of_swears = ['ass', 'fuck', 'shit', 'shitty', 'hell']
     if any(word in user_message_to_list for word in list_of_swears):
         return {"animation": "no", "msg": "Please don't swear"}
     elif user_message.startswith("My name") or user_message.startswith("my name"):
-        return {"animation": "inlove", "msg": "Hi"}
+        return {"animation": "excited", "msg": "Hi"}
     elif user_message.startswith("music"):
-        return {"animation": "dancing", "msg": "I love music!"}
+        return {"animation": "dancing", "msg": "I love music! Yalla kapa eim!"}
     elif user_message.endswith("animal") or user_message.endswith("animals"):
         return {"animation": "dog", "msg": "Oh that's awesome! "}
     elif user_message.endswith("bye") or user_message.endswith("see you"):
