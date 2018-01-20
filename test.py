@@ -1,0 +1,1 @@
+import random, ossong = os.listdir('/sound')print song

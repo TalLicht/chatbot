@@ -94,6 +94,9 @@ ChatBot.sendMessage = function () {
                 if (typeof result != "undefined" && "msg" in result) {
                     ChatBot.setAnimation(result.animation);
                     ChatBot.write(result.msg, "boto");
+//                    if ("sound" in result){
+//                        ChatBot.play(result.sound);
+//                    }
                 } else {
                     //The server did not erred but we got an empty result (handling as error)
                     ChatBot.handleServerError("No result");
